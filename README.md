@@ -1,495 +1,418 @@
-# 🏢 JAM-ERP — Enterprise Resource Planning System
+# 🏢 JAM-ERP Frontend
 
-> **JAM-ERP** is a full-stack Enterprise Resource Planning (ERP) application designed to centralize and manage organizational operations such as employee management, departments, payroll, assets, and user authentication.
+> **JAM-ERP Frontend** is a modern web interface for the JAM-ERP Enterprise Resource Planning system, developed using **React.js, Vite, Bootstrap, and Axios**.
+
+The frontend provides a user-friendly interface for managing employees, departments, payroll, assets, authentication, and other ERP operations through REST APIs.
 
 ---
 
 ## 📌 Project Overview
 
-JAM-ERP provides a centralized platform where authorized users can manage different organizational resources through a secure and role-based system.
-
-The application follows a **Frontend → REST API → Backend → Database** architecture.
-
 ```text
-                         ┌─────────────────────────┐
-                         │        JAM-ERP           │
-                         │  Enterprise Resource     │
-                         │    Planning System       │
-                         └────────────┬────────────┘
-                                      │
-                    ┌─────────────────┴─────────────────┐
-                    │                                   │
-              ┌─────▼─────┐                       ┌─────▼─────┐
-              │   Admin   │                       │ Employee  │
-              │   User    │                       │   User    │
-              └─────┬─────┘                       └─────┬─────┘
-                    │                                   │
-                    └─────────────────┬─────────────────┘
-                                      │
-                              ┌───────▼───────┐
-                              │   React.js    │
-                              │   Frontend    │
-                              └───────┬───────┘
-                                      │
-                                  REST APIs
-                                      │
-                              ┌───────▼───────┐
-                              │ Spring Boot   │
-                              │    Backend    │
-                              └───────┬───────┘
-                                      │
-                         ┌────────────┼────────────┐
-                         │            │            │
-                    ┌────▼────┐ ┌────▼────┐ ┌────▼─────┐
-                    │ Spring  │ │   JWT   │ │   REST   │
-                    │Security │ │  Auth   │ │   APIs   │
-                    └─────────┘ └─────────┘ └──────────┘
-                                      │
-                              ┌───────▼───────┐
-                              │   Database    │
-                              │ PostgreSQL /  │
-                              │    MySQL      │
-                              └───────────────┘
+                         ┌─────────────────────┐
+                         │       JAM-ERP       │
+                         │      FRONTEND       │
+                         └──────────┬──────────┘
+                                    │
+                     ┌──────────────┼──────────────┐
+                     │              │              │
+                     ▼              ▼              ▼
+               ┌──────────┐   ┌──────────┐   ┌──────────┐
+               │   Auth   │   │Dashboard │   │  Users   │
+               └──────────┘   └──────────┘   └──────────┘
+                     │              │              │
+                     └──────────────┼──────────────┘
+                                    │
+             ┌──────────────────────┼──────────────────────┐
+             │                      │                      │
+             ▼                      ▼                      ▼
+       ┌────────────┐        ┌────────────┐        ┌────────────┐
+       │ Department │        │  Payroll   │        │   Assets   │
+       │ Management │        │ Management │        │ Management │
+       └────────────┘        └────────────┘        └────────────┘
+                                    │
+                                    ▼
+                            ┌──────────────┐
+                            │ Spring Boot  │
+                            │ REST Backend │
+                            └──────────────┘
 ```
 
 ---
 
 # 🚀 Features
 
+### 🔐 Authentication
+
 ```text
-                         ┌─────────────────────┐
-                         │      JAM-ERP        │
-                         └──────────┬──────────┘
-                                    │
-          ┌─────────────────────────┼─────────────────────────┐
-          │                         │                         │
-     ┌────▼────┐               ┌────▼─────┐              ┌────▼─────┐
-     │  Login  │               │Dashboard │              │  Users   │
-     │  /Auth  │               │          │              │ & Roles  │
-     └─────────┘               └──────────┘              └──────────┘
-                                    │
-          ┌─────────────────────────┼─────────────────────────┐
-          │                         │                         │
-     ┌────▼───────┐           ┌─────▼─────┐             ┌────▼─────┐
-     │ Department │           │ Employees │             │ Payroll  │
-     │ Management │           │Management │             │Management│
-     └────────────┘           └───────────┘             └──────────┘
-                                    │
-                              ┌─────▼─────┐
-                              │  Assets   │
-                              │Management │
-                              └───────────┘
+                  ┌───────────────┐
+                  │     Login     │
+                  └───────┬───────┘
+                          │
+                          ▼
+                  ┌───────────────┐
+                  │  Login API    │
+                  └───────┬───────┘
+                          │
+                          ▼
+                  ┌───────────────┐
+                  │ JWT / Session │
+                  │ Authentication│
+                  └───────┬───────┘
+                          │
+                          ▼
+                  ┌───────────────┐
+                  │   Dashboard   │
+                  └───────────────┘
 ```
 
-### 🔐 Authentication & Authorization
+The frontend provides:
 
-* User login and registration
+* Login
+* Registration
+* Logout
+* Protected routes
 * JWT-based authentication
-* Spring Security
-* Role-based authorization
-* Protected REST APIs
-* Secure access to modules based on user roles
+* Role-based UI access
+* Authentication state management
 
-### 👨‍💼 Employee Management
+---
 
-* Add employees
-* View employee information
-* Update employee details
-* Delete employee records
-* Manage employee-department relationships
+# 📊 Dashboard
 
-### 🏢 Department Management
+The dashboard provides a centralized overview of the ERP system.
 
-* Create departments
+```text
+┌────────────────────────────────────────────────────────┐
+│                      DASHBOARD                          │
+├────────────────────┬───────────────────┬───────────────┤
+│                    │                   │               │
+│    👥 Employees    │   🏢 Departments │   💰 Payroll  │
+│                    │                   │               │
+├────────────────────┴───────────────────┴───────────────┤
+│                                                        │
+│                    💻 Assets                           │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+---
+
+# 🏢 Department Management
+
+```text
+                    Department Module
+                           │
+            ┌──────────────┼──────────────┐
+            │              │              │
+            ▼              ▼              ▼
+          Create         View           Update
+            │              │              │
+            └──────────────┼──────────────┘
+                           │
+                           ▼
+                         Delete
+```
+
+Features:
+
+* Create department
 * View departments
-* Update department information
-* Delete departments
-* Assign employees to departments
+* Update department
+* Delete department
+* Display department information
+* Connect employees with departments
 
-### 💰 Payroll Management
+---
 
-* Maintain employee salary information
-* Manage payroll records
-* Salary-related operations
-* Employee payroll tracking
+# 👨‍💼 Employee Management
 
-### 💻 Asset Management
+```text
+                     Employee Module
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+        Create            View            Update
+          │                │                │
+          └────────────────┼────────────────┘
+                           │
+                           ▼
+                         Delete
+```
 
-* Add organizational assets
-* View available assets
+Features:
+
+* Add employee
+* View employee details
+* Edit employee information
+* Delete employee
+* Display employee list
+* Manage department assignment
+
+---
+
+# 💰 Payroll Management
+
+```text
+                      Payroll Module
+                            │
+             ┌──────────────┼──────────────┐
+             │              │              │
+             ▼              ▼              ▼
+          Employee        Salary         Payroll
+           Details        Details         Records
+             │              │              │
+             └──────────────┼──────────────┘
+                            │
+                            ▼
+                     Payroll Display
+```
+
+Features:
+
+* View payroll information
+* Display salary details
+* Manage employee payroll records
+* Connect payroll information with employees
+
+---
+
+# 💻 Asset Management
+
+```text
+                       Asset Module
+                            │
+             ┌──────────────┼──────────────┐
+             │              │              │
+             ▼              ▼              ▼
+           Create          View          Assign
+             │              │              │
+             └──────────────┼──────────────┘
+                            │
+                            ▼
+                          Track
+```
+
+Features:
+
+* Add assets
+* View assets
+* Update asset information
 * Assign assets to employees
 * Track assigned assets
 
-### 📊 Dashboard
-
-The dashboard provides a centralized overview of important organizational information.
-
-```text
-              ┌───────────────────────────┐
-              │         Dashboard         │
-              └─────────────┬─────────────┘
-                            │
-          ┌─────────────────┼─────────────────┐
-          │                 │                 │
-     ┌────▼────┐       ┌────▼────┐       ┌────▼────┐
-     │Employees│       │Departments│      │ Payroll │
-     │   👥    │       │    🏢     │      │   💰    │
-     └─────────┘       └───────────┘      └─────────┘
-                            │
-                       ┌────▼────┐
-                       │ Assets  │
-                       │   💻    │
-                       └─────────┘
-```
-
 ---
 
-# 🏗️ System Architecture
+# 🔄 Frontend Architecture
 
 ```text
-┌───────────────────────────────────────────────────────────────┐
-│                         CLIENT LAYER                          │
-│                                                               │
-│                 React.js + Vite + Bootstrap                   │
-│                                                               │
-└──────────────────────────────┬────────────────────────────────┘
-                               │
-                               │ HTTP / REST API
-                               ▼
-┌───────────────────────────────────────────────────────────────┐
-│                         API LAYER                             │
-│                                                               │
-│                  Spring Boot REST Controllers                 │
-│                                                               │
-└──────────────────────────────┬────────────────────────────────┘
-                               │
-                               ▼
-┌───────────────────────────────────────────────────────────────┐
-│                       SECURITY LAYER                           │
-│                                                               │
-│             Spring Security + JWT Authentication              │
-│                                                               │
-└──────────────────────────────┬────────────────────────────────┘
-                               │
-                               ▼
-┌───────────────────────────────────────────────────────────────┐
-│                       BUSINESS LAYER                          │
-│                                                               │
-│              Service / Implementation Classes                │
-│                                                               │
-└──────────────────────────────┬────────────────────────────────┘
-                               │
-                               ▼
-┌───────────────────────────────────────────────────────────────┐
-│                     DATA ACCESS LAYER                         │
-│                                                               │
-│                 Spring Data JPA / Repository                  │
-│                                                               │
-└──────────────────────────────┬────────────────────────────────┘
-                               │
-                               ▼
-┌───────────────────────────────────────────────────────────────┐
-│                        DATABASE                               │
-│                                                               │
-│                    PostgreSQL / MySQL                          │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
-
----
-
-# 🔐 Authentication Flow
-
-```text
-        ┌──────────────┐
-        │    User      │
-        └──────┬───────┘
-               │
-               │ Login
-               ▼
-        ┌──────────────┐
-        │ React Client │
-        └──────┬───────┘
-               │
-               │ POST /login
-               ▼
-        ┌──────────────┐
-        │   Security   │
-        │    Layer     │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │ Authenticate │
-        │    User      │
-        └──────┬───────┘
-               │
-        ┌──────▼───────┐
-        │ Generate JWT │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │ JWT / Cookie │
-        └──────┬───────┘
-               │
-               ▼
-        ┌──────────────┐
-        │ Authenticated│
-        │    User      │
-        └──────────────┘
-```
-
----
-
-# 🛡️ API Security Flow
-
-```text
-                     Incoming Request
+┌────────────────────────────────────────────────────────┐
+│                    React Application                    │
+└───────────────────────────┬────────────────────────────┘
                             │
                             ▼
-                  ┌──────────────────┐
-                  │   JWT Filter     │
-                  └────────┬─────────┘
-                           │
-                    Extract JWT
-                           │
-                           ▼
-                  ┌──────────────────┐
-                  │ Validate Token   │
-                  └────────┬─────────┘
-                           │
-                     ┌─────┴─────┐
-                     │           │
-                  Valid       Invalid
-                     │           │
-                     ▼           ▼
-              ┌──────────┐   ┌───────────┐
-              │ Security │   │   401     │
-              │ Context  │   │Unauthorized│
-              └────┬─────┘   └───────────┘
-                   │
-                   ▼
-            ┌──────────────┐
-            │ Authorization│
-            │  / Role      │
-            └──────┬───────┘
-                   │
-                   ▼
-             ┌────────────┐
-             │ Controller │
-             └────────────┘
+┌────────────────────────────────────────────────────────┐
+│                      Components                         │
+│                                                        │
+│ Navbar │ Sidebar │ Forms │ Tables │ Cards │ Modals     │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                         Pages                           │
+│                                                        │
+│ Login │ Dashboard │ Employee │ Department │ Payroll    │
+│                                                        │
+│ Assets │ Profile │ Other Pages                         │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                       Services                          │
+│                                                        │
+│                     Axios / API                         │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            │ HTTP Requests
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                   Spring Boot Backend                   │
+│                      REST APIs                          │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-# 🧩 Main Modules
+# 🌐 API Communication
+
+The frontend communicates with the Spring Boot backend using **Axios**.
 
 ```text
-                        ┌────────────────┐
-                        │    JAM-ERP     │
-                        └───────┬────────┘
-                                │
-        ┌───────────────────────┼────────────────────────┐
-        │                       │                        │
- ┌──────▼──────┐         ┌──────▼──────┐          ┌──────▼──────┐
- │Authentication│         │ Department  │          │  Employee   │
- │ & Security  │         │ Management  │          │ Management  │
- └─────────────┘         └─────────────┘          └─────────────┘
-        │                       │                        │
-        └───────────────────────┼────────────────────────┘
-                                │
-                 ┌──────────────┼──────────────┐
-                 │                             │
-          ┌──────▼──────┐               ┌──────▼──────┐
-          │   Payroll   │               │   Assets    │
-          │ Management  │               │ Management  │
-          └─────────────┘               └─────────────┘
+┌──────────────────┐
+│   React Page     │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  Event / Action  │
+│  Button / Form   │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│ Axios API Call   │
+└────────┬─────────┘
+         │
+         │ HTTP Request
+         ▼
+┌──────────────────┐
+│ Spring Boot API  │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│    Database      │
+└────────┬─────────┘
+         │
+         │ JSON Response
+         ▼
+┌──────────────────┐
+│ Axios Response   │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│ Update React UI  │
+└──────────────────┘
+```
+
+---
+
+# 🔐 Protected Route Flow
+
+```text
+                      User
+                       │
+                       ▼
+                ┌──────────────┐
+                │  React Router│
+                └──────┬───────┘
+                       │
+                       ▼
+                ┌──────────────┐
+                │ Authentication│
+                │    Check      │
+                └──────┬───────┘
+                       │
+                ┌──────┴──────┐
+                │             │
+              Valid         Invalid
+                │             │
+                ▼             ▼
+          ┌──────────┐   ┌──────────┐
+          │ Protected│   │  Login   │
+          │   Page   │   │   Page   │
+          └──────────┘   └──────────┘
 ```
 
 ---
 
 # 🛠️ Technology Stack
 
-| Layer           | Technology                  |
-| --------------- | --------------------------- |
-| Frontend        | React.js                    |
-| Build Tool      | Vite                        |
-| UI              | Bootstrap                   |
-| Backend         | Java                        |
-| Framework       | Spring Boot                 |
-| Security        | Spring Security             |
-| Authentication  | JWT                         |
-| API             | REST API                    |
-| ORM             | Spring Data JPA / Hibernate |
-| Database        | PostgreSQL / MySQL          |
-| Build Tool      | Maven                       |
-| Version Control | Git & GitHub                |
+| Category              | Technology   |
+| --------------------- | ------------ |
+| Frontend Framework    | React.js     |
+| Build Tool            | Vite         |
+| UI Framework          | Bootstrap    |
+| HTTP Client           | Axios        |
+| Routing               | React Router |
+| Authentication        | JWT          |
+| Programming Language  | JavaScript   |
+| Package Manager       | npm          |
+| Backend Communication | REST API     |
+| Version Control       | Git / GitHub |
 
 ---
 
 # 📁 Project Structure
 
 ```text
-JAM-ERP/
+JAM-ERP-FRONTEND/
 │
-├── backend/
+├── public/
+│
+├── src/
 │   │
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── .../
-│   │   │   │
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   │
-│   │   └── test/
+│   ├── assets/
 │   │
-│   ├── pom.xml
+│   ├── components/
+│   │   ├── Navbar/
+│   │   ├── Sidebar/
+│   │   ├── ProtectedRoute/
+│   │   └── ...
+│   │
+│   ├── pages/
+│   │   ├── Login/
+│   │   ├── Register/
+│   │   ├── Dashboard/
+│   │   ├── Employee/
+│   │   ├── Department/
+│   │   ├── Payroll/
+│   │   ├── Assets/
+│   │   └── ...
+│   │
+│   ├── services/
+│   │   └── api/
+│   │
+│   ├── constants/
+│   │
+│   ├── App.jsx
+│   ├── main.jsx
 │   └── ...
 │
-├── frontend/
-│   │
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── assets/
-│   │   └── App.jsx
-│   │
-│   ├── package.json
-│   └── vite.config.js
-│
+├── .env
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── vite.config.js
 └── README.md
 ```
 
 ---
 
-# 🔄 Request Flow
+# ⚙️ Installation
 
-```text
-User
- │
- ▼
-React Frontend
- │
- │ HTTP Request
- ▼
-REST Controller
- │
- ▼
-Spring Security
- │
- ▼
-JWT Authentication
- │
- ▼
-Service Layer
- │
- ▼
-Repository Layer
- │
- ▼
-Database
- │
- │ Response
- ▼
-Repository
- │
- ▼
-Service
- │
- ▼
-Controller
- │
- ▼
-React Frontend
- │
- ▼
-User
-```
-
----
-
-# 👥 Role-Based Access
-
-```text
-                 ┌──────────────┐
-                 │     User     │
-                 └──────┬───────┘
-                        │
-                        ▼
-                 ┌──────────────┐
-                 │     JWT      │
-                 └──────┬───────┘
-                        │
-                        ▼
-                 ┌──────────────┐
-                 │ User Role    │
-                 └──────┬───────┘
-                        │
-              ┌─────────┴─────────┐
-              │                   │
-              ▼                   ▼
-        ┌───────────┐       ┌───────────┐
-        │   ADMIN   │       │  EMPLOYEE │
-        └─────┬─────┘       └─────┬─────┘
-              │                   │
-              ▼                   ▼
-       Full Management       Limited Access
-       Operations            Operations
-```
-
----
-
-# ⚙️ Installation & Setup
-
-## 1️⃣ Clone the Repository
+## 1. Clone the Repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd JAM-ERP
+git clone <YOUR_FRONTEND_REPOSITORY_URL>
+cd JAM-ERP-FRONTEND
 ```
 
-## 2️⃣ Backend Setup
+## 2. Install Dependencies
 
 ```bash
-cd backend
-```
-
-Configure your database and application properties:
-
-```properties
-spring.datasource.url=<DATABASE_URL>
-spring.datasource.username=<DATABASE_USERNAME>
-spring.datasource.password=<DATABASE_PASSWORD>
-```
-
-Run the backend:
-
-```bash
-mvn spring-boot:run
-```
-
-Backend will run on:
-
-```text
-http://localhost:8080
-```
-
----
-
-## 3️⃣ Frontend Setup
-
-Open another terminal:
-
-```bash
-cd frontend
 npm install
+```
+
+## 3. Configure Backend URL
+
+Create a `.env` file:
+
+```env
+VITE_BACKEND_URL=http://localhost:8080
+```
+
+> Change the backend URL according to your deployment environment.
+
+## 4. Start Development Server
+
+```bash
 npm run dev
 ```
 
-Frontend will normally run on:
+The application will normally be available at:
 
 ```text
 http://localhost:5173
@@ -497,170 +420,186 @@ http://localhost:5173
 
 ---
 
-# 🔗 Frontend–Backend Communication
+# 🔗 Frontend & Backend Architecture
 
 ```text
-┌─────────────────────┐
-│     React.js        │
-│ localhost:5173      │
-└──────────┬──────────┘
-           │
-           │ Axios / HTTP
-           ▼
-┌─────────────────────┐
-│    Spring Boot      │
-│ localhost:8080      │
-└──────────┬──────────┘
-           │
-           │ JPA / Hibernate
-           ▼
-┌─────────────────────┐
-│      Database       │
-│ PostgreSQL / MySQL  │
-└─────────────────────┘
+                         JAM-ERP
+                            │
+             ┌──────────────┴──────────────┐
+             │                             │
+             ▼                             ▼
+      ┌─────────────┐               ┌─────────────┐
+      │  FRONTEND   │               │   BACKEND   │
+      │             │               │             │
+      │ React + Vite│◄──── REST ───►│Spring Boot  │
+      │ Bootstrap   │      API      │Spring       │
+      │ Axios       │               │Security     │
+      └─────────────┘               │JWT          │
+                                    └──────┬──────┘
+                                           │
+                                           ▼
+                                    ┌─────────────┐
+                                    │  Database   │
+                                    └─────────────┘
+```
+
+---
+
+# 📱 Responsive UI
+
+The frontend is designed to provide a responsive user interface for different screen sizes.
+
+```text
+┌──────────────────────────────┐
+│          Desktop             │
+│                              │
+│  Sidebar │     Content       │
+│          │                   │
+└──────────────────────────────┘
+
+┌──────────────────┐
+│      Tablet      │
+│                  │
+│   Content Area   │
+│                  │
+└──────────────────┘
+
+┌──────────────┐
+│    Mobile    │
+│              │
+│   Content    │
+│              │
+└──────────────┘
+```
+
+---
+
+# 🧪 Development
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Build the production version:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+---
+
+# 🚀 Deployment
+
+```text
+                  ┌─────────────────┐
+                  │  Source Code    │
+                  │     GitHub      │
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │   npm build     │
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ Production Build│
+                  └────────┬────────┘
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │ Hosting Service │
+                  └────────┬────────┘
+                           │
+                           ▼
+                         Users
 ```
 
 ---
 
 # 🎯 Project Objectives
 
-* Centralize organizational data
-* Automate routine administrative operations
-* Provide secure role-based access
-* Manage employees and departments efficiently
-* Maintain payroll information
-* Track organizational assets
-* Provide RESTful APIs for frontend communication
-* Improve data accessibility and management
-
----
-
-# 👨‍💻 My Contribution
-
-As a member of the JAM-ERP development team, my primary contribution was focused on the **backend development** using Java and Spring Boot.
-
-### Key Responsibilities
-
-* Developed REST APIs using Spring Boot
-* Implemented authentication and authorization using Spring Security and JWT
-* Worked on role-based access control
-* Developed department-related backend functionality
-* Worked on payroll-related functionality
-* Implemented DTO and Entity mapping
-* Worked with Spring Data JPA and Hibernate
-* Integrated backend APIs with the React frontend
-* Worked with relational database operations
-* Tested and debugged REST APIs
+* Build a modern ERP user interface
+* Provide easy navigation between ERP modules
+* Consume secure REST APIs
+* Implement authentication and protected routes
+* Provide role-based access to frontend features
+* Create reusable React components
+* Provide responsive UI
+* Connect frontend with Spring Boot backend
 
 ---
 
 # 🔮 Future Enhancements
 
 ```text
-Current JAM-ERP
+Current Frontend
        │
        ▼
-┌──────────────────┐
-│ Modular Monolith  │
-└────────┬─────────┘
-         │
-         │ Future Migration
-         ▼
-┌─────────────────────────────┐
-│     Microservice System     │
-└──────────────┬──────────────┘
-               │
-     ┌─────────┼─────────┐
-     │         │         │
-     ▼         ▼         ▼
- Auth       Employee   Payroll
-Service     Service    Service
-     │         │         │
-     └─────────┼─────────┘
-               │
-        ┌──────▼──────┐
-        │ API Gateway │
-        └──────┬──────┘
-               │
-        ┌──────▼──────┐
-        │   Service   │
-        │  Discovery  │
-        └─────────────┘
+┌──────────────────────┐
+│ React + REST API     │
+└──────────┬───────────┘
+           │
+           ▼
+    Future Improvements
+           │
+     ┌─────┼─────┐
+     │     │     │
+     ▼     ▼     ▼
+   Charts Notifications Advanced
+   & BI     & Email   UI/UX
+     │     │     │
+     └─────┼─────┘
+           │
+           ▼
+   ┌─────────────────┐
+   │ Cloud Deployment│
+   │ & CI/CD         │
+   └─────────────────┘
 ```
 
-Possible future improvements:
+Future improvements may include:
 
-* Convert the monolithic backend into microservices
-* Introduce API Gateway
-* Implement service discovery using Eureka
-* Add centralized configuration
-* Add notification services
-* Add advanced payroll calculations
-* Add reporting and analytics
-* Add cloud deployment
-* Implement CI/CD pipeline
-* Add automated testing
+* Advanced dashboard charts
+* Data visualization
+* Improved search and filtering
+* Pagination
+* Notifications
+* Advanced form validation
+* Better mobile responsiveness
+* CI/CD integration
+* Cloud deployment
+* Performance optimization
 
 ---
 
-# 📊 High-Level Architecture
+# 👨‍💻 Project Type
+
+**Group Project — JAM-ERP**
+
+### Development Focus
 
 ```text
-                         ┌──────────────────┐
-                         │      USERS       │
-                         └────────┬─────────┘
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │   React + Vite   │
-                         │    Frontend      │
-                         └────────┬─────────┘
-                                  │
-                             REST / Axios
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │   Spring Boot    │
-                         │     Backend      │
-                         └────────┬─────────┘
-                                  │
-                 ┌────────────────┼────────────────┐
-                 │                │                │
-                 ▼                ▼                ▼
-          ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-          │  Security   │  │   Service   │  │ Controller  │
-          │ JWT + RBAC  │  │    Layer    │  │    Layer    │
-          └─────────────┘  └──────┬──────┘  └─────────────┘
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │ Spring Data JPA  │
-                         │    Hibernate     │
-                         └────────┬─────────┘
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │    Database      │
-                         │ PostgreSQL/MySQL │
-                         └──────────────────┘
-```
-
----
-
-# 📌 Project Status
-
-```text
-Frontend        : ✅ Completed
-Backend         : ✅ Completed
-Authentication  : ✅ JWT + Spring Security
-Authorization   : ✅ Role Based
-REST APIs       : ✅ Implemented
-Database        : ✅ Integrated
-ERP Modules     : ✅ Implemented
+Frontend
+   │
+   ├── React.js
+   ├── Vite
+   ├── Bootstrap
+   ├── Axios
+   ├── React Router
+   └── REST API Integration
 ```
 
 ---
 
 # 📜 License
 
-This project was developed as an academic/group project for learning and demonstrating full-stack application development, backend development, database management, authentication, and enterprise application architecture.
+This project was developed as an academic/group project for learning and demonstrating modern frontend development, REST API integration, authentication, authorization, and enterprise application development.
