@@ -10,7 +10,7 @@ import Attendance from "./pages/attendance";
 import Asset from "./pages/asset";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Project from "./pages/project";
-import ChangePassword from "./pages/changePassword";
+import ChangePassword from "./pages/ChangePassword";
 import Payroll from "./pages/payroll";
 import UsersPage from "./pages/users";
 import LeaveManagement from "./pages/leave";
