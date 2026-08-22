@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 15000,
 });
 
 
@@ -20,10 +21,16 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    const isLoginRequest = error.config?.url?.includes("/auth/login");
+
+    if (
+      !isLoginRequest &&
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
       console.error("Token expired or unauthorized, redirecting to login.");
       localStorage.removeItem("token");
-      window.location.href = "/login"; // Redirect to login page
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }
