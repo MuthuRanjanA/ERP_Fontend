@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 
 import api from "../api/axiosInstance";
@@ -7,6 +7,32 @@ import BrandPanel from "../components/layout/BrandPanel";
 import { useToast } from "../components/common/ToastContext";
 
 import "../style/auth.css";
+
+const getLoginErrorMessage = (error) => {
+  if (!error.isAxiosError) {
+    return error.message || "Unable to sign in. Please try again.";
+  }
+
+  const status = error.response?.status;
+
+  if (status === 401 || status === 403) {
+    return "Invalid email or password.";
+  }
+
+  if (status >= 500) {
+    return "The login service is temporarily unavailable. Please try again shortly.";
+  }
+
+  if (error.code === "ECONNABORTED") {
+    return "The login service took too long to respond. Please try again.";
+  }
+
+  if (!error.response) {
+    return "Unable to reach the login service. Check your connection and try again.";
+  }
+
+  return error.response.data?.message || "Unable to sign in. Please try again.";
+};
 
 function Login() {
   const navigate = useNavigate();
@@ -31,61 +57,60 @@ function Login() {
 
     setErrorMessage("");
   };
-const loginUser = async (e) => {
-  e.preventDefault();
+  const loginUser = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
 
-  try {
-    const response =
-      await api.post(
-        "/api/auth/login",
-        loginData
-      );
+    try {
+      const response = await api.post("/api/auth/login", {
+        email: loginData.email.trim(),
+        password: loginData.password,
+      });
 
-    const {
-      token,
-      role,
-      employeeId,
-      employeeName,
-      temporaryPassword,
-    } = response.data;
+      const {
+        token,
+        role,
+        employeeId,
+        employeeName,
+        temporaryPassword,
+      } = response.data;
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", role?.trim()?.toUpperCase() || "EMPLOYEE");
-    localStorage.setItem(
-      "email",
-      loginData.email
-    );
+      if (!token) {
+        throw new Error("The login response did not include an access token.");
+      }
 
-    if (employeeId !== null) {
-      localStorage.setItem(
-        "employeeId",
-        employeeId
-      );
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role?.trim()?.toUpperCase() || "EMPLOYEE");
+      localStorage.setItem("email", loginData.email.trim());
+
+      if (employeeId !== null && employeeId !== undefined) {
+        localStorage.setItem("employeeId", employeeId);
+      }
+
+      if (employeeName) {
+        localStorage.setItem("employeeName", employeeName);
+      }
+
+      if (temporaryPassword) {
+        navigate("/change-password");
+        return;
+      }
+
+      navigate("/dashboard");
+    } catch (error) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("employeeId");
+      localStorage.removeItem("employeeName");
+
+      const message = getLoginErrorMessage(error);
+      setErrorMessage(message);
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (employeeName) {
-      localStorage.setItem(
-        "employeeName",
-        employeeName
-      );
-    }
-
-    if (temporaryPassword) {
-      navigate("/change-password");
-      return;
-    }
-
-    navigate("/dashboard");
-
-  } catch (error) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("employeeId");
-    localStorage.removeItem("employeeName");
-    toast.error("Invalid email or password");
-    navigate("/login", { replace: true });
-  }
-};
+  };
 
   return (
     <main className="auth-page">
@@ -130,6 +155,7 @@ const loginUser = async (e) => {
                     onChange={handleChange}
                     placeholder="name@company.com"
                     autoComplete="email"
+                    required
                   />
                 </div>
               </div>
@@ -157,6 +183,7 @@ const loginUser = async (e) => {
                     onChange={handleChange}
                     placeholder="Enter your password"
                     autoComplete="current-password"
+                    required
                   />
 
                   <button
