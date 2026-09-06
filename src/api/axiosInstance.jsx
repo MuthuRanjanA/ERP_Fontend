@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Determine default base URL based on build mode
 const defaultBaseUrl = import.meta.env.PROD
-  ? "https://jamerp.onrender.com"
+  ? (import.meta.env.VITE_API_URL || "https://erp-backend-s2nx.onrender.com")
   : "http://localhost:8080";
 
 // Support both VITE_API_BASE_URL and VITE_API_URL
@@ -31,8 +31,13 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Do not trigger redirect loop if already on the login page
+    const isLoginRequest = error.config?.url?.includes("/auth/login");
+
+    if (
+      !isLoginRequest &&
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
       const currentPath = window.location.pathname;
       if (!currentPath.includes("/login")) {
         console.error("Token expired or unauthorized, redirecting to login.");
